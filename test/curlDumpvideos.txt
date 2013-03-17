@@ -1,0 +1,28 @@
+[
+  {
+    "id": 70304,
+    "description": "38 år ... Og hvor er det nu Krak-kortet er til resten af livet ... ? Det er grundtonen i dokumentarprogrammet \"3.z\", hvor DRs Anders Agger foretager et personligt tilbageblik på den gymnasieklasse, han forlod for snart mange år siden.",
+    "programSerieSlug": "3-z-gensyn-med-vennerne",
+    "title": "3.z - Gensyn med vennerne",
+    "duration": "00:58:32",
+    "broadcastTime": "2013-02-18T10:52:00",
+    "expireTime": "3000-01-01T01:00:00",
+    "publishTime": "2013-02-12T15:14:00",
+    "expired": false,
+    "broadcastChannel": "",
+    "videoManifestUrl": "http://www.dr.dk/Forms/Published/PlaylistGen.aspx?qid=3722052&OnlyWritePath=True",
+    "videoResourceUrl": "http://www.dr.dk/handlers/GetResource.ashx?id=1410848",
+    "premiere": false,
+    "rtmpVideoHost": "rtmp://vod-prio1.gss.dr.dk",
+    "webCmsImagePath": "/NR/rdonlyres/D1CFEA0F-A74C-4ED0-BF08-C10FBB7C6C0A/4863829/ee2d8a01bd5346debfe2c30261e528e1_b42836920d814038b.jpg",
+    "isHq": false,
+    "bitrateKbps": 1125,
+    "height": 480,
+    "width": 854,
+    "formattedExpireTime": "1. jan. 3000",
+    "formattedBroadcastTime": "18. feb. 2013",
+    "formattedBroadcastTimeForTVSchedule": "man. d. 18. feb",
+    "formattedBroadcastHourForTVSchedule": "Kl. 10:52",
+    "chapters": []
+  }
+]
