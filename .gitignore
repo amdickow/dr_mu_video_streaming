@@ -6,3 +6,6 @@
 *.includes
 *.o
 *.pro.user
+Makefile
+moc_*
+ui_*
