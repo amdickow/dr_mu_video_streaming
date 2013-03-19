@@ -71,19 +71,19 @@ unsigned int VideoModel::GetId() {
     return id;
 }
 
-std::string *VideoModel::GetDescription() {
+QString *VideoModel::GetDescription() {
     return &description;
 }
 
-std::string *VideoModel::GetTitle() {
+QString *VideoModel::GetTitle() {
     return &title;
 }
 
-std::string *VideoModel::GetVideoManifestUrl() {
+QString *VideoModel::GetVideoManifestUrl() {
     return &videoManifestUrl;
 }
 
-std::string *VideoModel::GetVideoResourceUrl() {
+QString *VideoModel::GetVideoResourceUrl() {
     return &videoResourceUrl;
 }
 
@@ -94,17 +94,17 @@ void VideoModel::Print() {
     if(id) {
         printf("    id                  : %d \n", id);
     }
-    if (!title.empty()) {
-        printf("    title               : %s \n", title.c_str());
+    if (!title.isEmpty()) {
+        printf("    title               : %s \n", qPrintable(title));
     }
-    if (!description.empty()) {
-        printf("    description         : %s \n", description.c_str());
+    if (!description.isEmpty()) {
+        printf("    description         : %s \n", qPrintable(description));
     }
-    if (!videoManifestUrl.empty()) {
-        printf("    video-manifest-url  : %s \n", videoManifestUrl.c_str());
+    if (!videoManifestUrl.isEmpty()) {
+        printf("    video-manifest-url  : %s \n", qPrintable(videoManifestUrl));
     }
-    if (!videoResourceUrl.empty()) {
-        printf("    video-resource-url  : %s \n", videoResourceUrl.c_str());
+    if (!videoResourceUrl.isEmpty()) {
+        printf("    video-resource-url  : %s \n", qPrintable(videoResourceUrl));
     }
 }
 

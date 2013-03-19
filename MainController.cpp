@@ -10,7 +10,7 @@ MainController::MainController(IMainController *client)
 }
 
 
-vector<string> &MainController::getProgramSeries()
+QList<QString> &MainController::getProgramSeries()
 {
     DRSession* session = new DRSession();
     SlugModel* slugsModel = new SlugModel();

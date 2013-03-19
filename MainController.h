@@ -2,8 +2,8 @@
 #define MAINCONTROLLER_H
 
 #include "IMainController.h"
-#include <string>
-#include <vector>
+#include <QString>
+#include <QList>
 
 class MainController
 {
@@ -15,7 +15,7 @@ public:
         kRunning
     };
 
-    std::vector<std::string> &getProgramSeries();
+    QList<QString> &getProgramSeries();
 
 private:
     MainController();

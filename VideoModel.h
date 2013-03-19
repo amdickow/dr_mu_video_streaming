@@ -1,7 +1,7 @@
 #ifndef VIDEOMODEL_H
 #define VIDEOMODEL_H
 
-#include <string>
+#include <QString>
 
 #include "libjson/libjson.h"
 
@@ -14,10 +14,10 @@ public:
     VideoModel(const char* data);
 
     unsigned int GetId();
-    std::string *GetDescription();
-    std::string *GetTitle();
-    std::string *GetVideoManifestUrl();
-    std::string *GetVideoResourceUrl();
+    QString *GetDescription();
+    QString *GetTitle();
+    QString *GetVideoManifestUrl();
+    QString *GetVideoResourceUrl();
 
     void Print();
 
@@ -25,10 +25,10 @@ public:
 
 private:
     unsigned int id;
-    std::string description;
-    std::string title;
-    std::string videoManifestUrl;
-    std::string videoResourceUrl;
+    QString description;
+    QString title;
+    QString videoManifestUrl;
+    QString videoResourceUrl;
 };
 
 #endif // VIDEOMODEL_H

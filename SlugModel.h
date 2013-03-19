@@ -1,8 +1,8 @@
 #ifndef SLUGMODEL_H
 #define SLUGMODEL_H
 
-#include <string>
-#include <vector>
+#include <QString>
+#include <QList>
 
 #include "libjson/libjson.h"
 
@@ -14,17 +14,17 @@ public:
     SlugModel();
     SlugModel(const char* data);
 
-    std::string *Get(int index);
+    QString *Get(int index);
     int GetSize();
 
-    std::vector<std::string> &GetSlugs() {return slugs;}
+    QList<QString> &GetSlugs() {return slugs;}
 
     void Print();
 
     virtual void ProcessJson(JSONNODE *node);
 
 private:
-    std::vector<std::string> slugs;
+    QList<QString> slugs;
 };
 
 #endif // SLUGMODEL_H
