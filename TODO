@@ -1,0 +1,5 @@
+1. Renaming MainController to UIController (and only map User interaction with certain data model(
+2. Renaming Resource, Slug, Video to SlugDataModel etc.
+3. Data models to implement use of LoaderThread for the data fetching
+4. Use NetworkAccessManager instead of CURL
+5. Use QJson instead of libJSON

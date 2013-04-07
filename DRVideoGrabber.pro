@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     ResourceModel.cpp \
     DRSession.cpp \
     BaseModel.cpp \
-    MainController.cpp
+    MainController.cpp \
+    LoaderThread.cpp
 
 HEADERS  += MainWindow.h \
     VideoModel.h \
@@ -33,7 +34,8 @@ HEADERS  += MainWindow.h \
     DRSession.h \
     BaseModel.h \
     MainController.h \
-    IMainController.h
+    IMainController.h \
+    LoaderThread.h
 
 
 FORMS    += MainWindow.ui
