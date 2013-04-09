@@ -87,6 +87,16 @@ QString *VideoModel::GetVideoResourceUrl() {
     return &videoResourceUrl;
 }
 
+VideoModel::VideoEntry* VideoModel::GetVideoEntry(int index)
+{
+
+}
+
+QList<VideoModel::VideoEntry*> VideoModel::GetVideoEntries()
+{
+
+}
+
 
 void VideoModel::Print() {
     printf("DEBUG Print() >>\n");

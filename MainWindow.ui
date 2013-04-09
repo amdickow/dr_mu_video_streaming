@@ -11,14 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>DR Video Grabber</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QPushButton" name="refreshButton">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>660</y>
+      <x>20</x>
+      <y>650</y>
       <width>98</width>
       <height>27</height>
      </rect>
@@ -27,14 +27,81 @@
      <string>Refresh</string>
     </property>
    </widget>
-   <widget class="QListView" name="listView">
+   <widget class="QListView" name="slugsView">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>1001</width>
+      <width>521</width>
       <height>621</height>
      </rect>
+    </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>OpenHandCursor</cursorShape>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QListView" name="downloadView">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>90</y>
+      <width>391</width>
+      <height>541</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="slugHeader">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>20</y>
+      <width>391</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="downloadButton">
+    <property name="geometry">
+     <rect>
+      <x>900</x>
+      <y>650</y>
+      <width>98</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Download</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="fetchButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>280</y>
+      <width>71</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fetch</string>
     </property>
    </widget>
   </widget>
@@ -47,6 +114,13 @@
      <height>25</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuDR_Video_Grabber">
+    <property name="title">
+     <string>DR Video Grabber</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuDR_Video_Grabber"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -57,6 +131,11 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

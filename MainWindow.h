@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStringListModel>
 #include "MainController.h"
 #include "IMainController.h"
 
@@ -19,13 +20,27 @@ public:
 
     /// Interface provided by IMainController
     void Progress(double current, double total);
+
+    void SlugsChanged(QStringListModel *model);
+
+    void VideosChanged(QStringListModel *model, QString *header);
+
+
     
 private slots:
     void on_refreshButton_released();
 
+    void on_actionAbout_triggered();
+
+
+    void on_slugsView_clicked(const QModelIndex &index);
+
+    void on_fetchButton_released();
+
 private:
     Ui::MainWindow *ui;
     MainController *controller;
+    int currentSlugSelection;
 
 };
 

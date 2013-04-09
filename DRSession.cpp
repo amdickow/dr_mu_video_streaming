@@ -252,7 +252,7 @@ void DRSession::DumpToFile() {
 char * DRSession::ReadFromFile(size_t *size) {
     char * buffer = 0;
     FILE * file = 0;
-    string fileStr = string("/home/dickow/git_wa/DRVideoGrabber/test/curlDump");
+    string fileStr = string("/home/dickow/git_wa/github/DRVideoGrabber/qt_json_parser/test/curlDump");
     int delimIdx = url.find_last_of("/");
     fileStr.append(url.substr(delimIdx+1));
     fileStr.append(".txt");

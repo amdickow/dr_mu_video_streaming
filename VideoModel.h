@@ -13,11 +13,22 @@ public:
     VideoModel();
     VideoModel(const char* data);
 
+    struct VideoEntry {
+        unsigned int id;
+        QString title;
+        QString description;
+        QString videoManifestUrl;
+        QString videoResourceUrl;
+    };
+
     unsigned int GetId();
     QString *GetDescription();
     QString *GetTitle();
     QString *GetVideoManifestUrl();
     QString *GetVideoResourceUrl();
+
+    VideoEntry* GetVideoEntry(int index);
+    QList<VideoEntry*> GetVideoEntries();
 
     void Print();
 
@@ -25,10 +36,7 @@ public:
 
 private:
     unsigned int id;
-    QString description;
-    QString title;
-    QString videoManifestUrl;
-    QString videoResourceUrl;
+    QList<VideoModel::VideoEntry*> videoEntries;
 };
 
 #endif // VIDEOMODEL_H
