@@ -1,5 +1,5 @@
 #include "LoaderThread.h"
 
-LoaderThread::run() {
+void LoaderThread::run() {
     //DO STUFF
 }

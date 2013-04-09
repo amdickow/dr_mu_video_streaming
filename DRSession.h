@@ -1,96 +1,71 @@
 #ifndef DRSESSION_H
 #define DRSESSION_H
 
+#include <QObject>
+#include <QByteArray>
+
+#include <QtNetwork/QNetworkAccessManager>
+#include <QUrl>
+
 #include <stdio.h>
 #include <string>
-#include "curl/curl.h"
 
 //#define DEBUG_WRITE_DATA_TO_FILE
-#define DEBUG_READ_DATA_FROM_FILE
+//#define DEBUG_READ_DATA_FROM_FILE
 
-class DRSession
+class QNetworkReply;
+
+class DRSession : public QObject
 {
+    Q_OBJECT
 public:
     DRSession(bool saveToFile = false);
     ~DRSession();
 
     /**
-     * Initialize the session
+     * Clear the session
      *
      * /return Boolean  success/failure
      **/
-    bool Init();
+    bool clear();
 
     /**
      * Setup the session
      *
      * /return Boolean  success/failure
      */
-    bool Setup(std::string url);
+    bool setup(QString url);
 
     /**
      * Execute the session
      *
      * /return char*  Pointer to fetched data
      */
-    char *Execute();
+    void execute();
 
-    /**
-     * Set progress callback
-     *
-     * /brief Set progress callback, that will be called repeatedly during the
-     *        execution of the curl session.
-     *        The progress callback should follow this format:
-     *        int prog_cb(void *, double, double, double, double)
-     *
-     * /param callback  Reference to the progress callback
-     */
-    void SetProgressCallback(void *callback);
+#ifndef DEBUG_READ_DATA_FROM_FILE
+public slots:
+    void httpFinished();
+    void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
+#endif
 
-    /**
-     * Data callback
-     *
-     * /brief Set data callback, that will be called data is ready to be
-     *        consumed e.g. due to curl session downloading.
-     *        The data callback should follow this format:
-     *        size_t data_cb(void *, size_t, size_t, void *)
-     *
-     * /param callback  Reference to the progress callback
-     */
-    void SetDataCallback(void *callback);
-
-    /// Curl session
-    CURL *curl;
-    /// Used for the progress callback
-    double lastRunTime;
-
-    /// Data store for the data read
-    char* memory;
-
-    /// Number of bytes of data read
-    size_t memorySize;
-
-    FILE *fileHandle;
-
-    std::string fileName;
+signals:
+    void done(QByteArray *data);
 
 private:
-    void Clean();
-    void BuildFileName(std::string url);
-
-    void* progress_cb;
-    void* data_cb;
-    std::string url;
     bool toFile;
+    QNetworkReply *reply;
+    QUrl url;
+    QNetworkAccessManager networkAccessMgr;
 
 
 
 #ifdef DEBUG_WRITE_DATA_TO_FILE
-    void DumpToFile();
+    void dumpToFile();
 #endif
 
 #ifdef DEBUG_READ_DATA_FROM_FILE
-    char* ReadFromFile(size_t *size);
+    char* readFromFile(size_t *size);
 #endif
 
 };

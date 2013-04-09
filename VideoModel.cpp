@@ -3,118 +3,84 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
-
-#include "libjson/libjson.h"
+#include <QString>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QVariantList>
+#include <QVariant>
+#include <QList>
 
 using namespace std;
 
-VideoModel::VideoModel() : BaseModel(0), id(0) { }
-
-VideoModel::VideoModel(const char* data) : BaseModel(data), id(0) { }
-
-void VideoModel::ProcessJson(JSONNODE *node) {
-    JSONNODE_ITERATOR begin = json_begin(node);
-    JSONNODE_ITERATOR end   = json_end(node);
-
-    printf("DEBUG: ProcessJson() >>\n");
-
-    while(begin != end) {
-        if (json_type(*begin) == JSON_ARRAY ||
-            json_type(*begin) == JSON_NODE) {
-            ProcessJson(*begin);
-        }
-
-        json_char *name = json_name(*begin);
-
-        if (strcmp(name, "id") == 0) {
-            json_int_t value = json_as_int(*begin);
-            id = value;
-            printf("DEBUG: ProcessJson() found id, value=%d\n", (int) value);
-        }
-
-        if (strcmp(name, "description") == 0) {
-            json_char *value = json_as_string(*begin);
-            description.append(value);
-            printf("DEBUG: ProcessJson() found description, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-
-        if (strcmp(name, "title") == 0) {
-            json_char *value = json_as_string(*begin);
-            title.append(value);
-            printf("DEBUG: ProcessJson() found title, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-
-        if (strcmp(name, "videoManifestUrl") == 0) {
-            json_char *value = json_as_string(*begin);
-            videoManifestUrl.append(value);
-            printf("DEBUG: ProcessJson() found videoManifestUrl, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-
-        if (strcmp(name, "videoResourceUrl") == 0) {
-            json_char *value = json_as_string(*begin);
-            videoResourceUrl.append(value);
-            printf("DEBUG: ProcessJson() found videoResourceUrl, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-        json_free(name);
-        ++begin;
-    }
-    //json_free(begin);
-    //json_free(end);
+void VideoEntries::add(VideoEntry *video) {
+    ids.push_back(video->id);
+    titles.push_back(video->title);
+    videoResourceUrls.push_back(video->videoResourceUrl);
 }
 
+QList<QString> &VideoEntries::getTitles() {
+    return titles;
+}
 
-unsigned int VideoModel::GetId() {
+void VideoEntries::print() {
+    printf("DEBUG print() >>\n");
+    int size = ids.size();
+    for (int i = 0; i < size; i++) {
+        if(ids.at(i)) {
+            printf("    id                  : %d \n", ids.at(i));
+        }
+        if (!titles.at(i).isEmpty()) {
+            printf("    title               : %s \n", qPrintable(titles.at(i)));
+        }
+        if (!videoResourceUrls.at(i).isEmpty()) {
+            printf("    video-resource-url  : %s \n", qPrintable(videoResourceUrls.at(i)));
+        }
+    }
+}
+
+VideoModel::VideoModel() : JsonHandlerBase(), id(0) { }
+
+void VideoModel::processJsonArray(const QJsonArray &node) {
+
+    printf("DEBUG: processJsonArray() >>\n");
+
+    foreach (QVariant item, node.toVariantList()) {
+        //printf("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
+        if (item.canConvert(QMetaType::QVariantMap)) {
+            QJsonObject jObj = QJsonObject::fromVariantMap(item.toMap());
+            //printf("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
+
+            VideoEntry *video = new VideoEntry();
+            video->id = (int)jObj.value("id").toDouble();
+            printf("DEBUG:      jObj.value(id)=%d\n",video->id);
+            video->title.append(jObj.value("title").toString());
+            printf("DEBUG:      jObj.value(title)=%s\n",qPrintable(video->title));
+            video->videoResourceUrl.append(jObj.value("videoResourceUrl").toString());
+            printf("DEBUG:      jObj.value(videoResourceUrl)=%s\n",qPrintable(video->videoResourceUrl));
+            videoEntries.add(video);
+        }
+    }
+}
+
+unsigned int VideoModel::getId() {
     return id;
 }
 
-QString *VideoModel::GetDescription() {
-    return &description;
+QString *VideoModel::getDescription() {
+    return 0; //&description;
 }
 
-QString *VideoModel::GetTitle() {
-    return &title;
-}
-
-QString *VideoModel::GetVideoManifestUrl() {
-    return &videoManifestUrl;
-}
-
-QString *VideoModel::GetVideoResourceUrl() {
-    return &videoResourceUrl;
-}
-
-VideoModel::VideoEntry* VideoModel::GetVideoEntry(int index)
-{
-
-}
-
-QList<VideoModel::VideoEntry*> VideoModel::GetVideoEntries()
-{
-
+QList<QString> &VideoModel::getTitles() {
+    return videoEntries.getTitles();
 }
 
 
-void VideoModel::Print() {
-    printf("DEBUG Print() >>\n");
-
-    if(id) {
-        printf("    id                  : %d \n", id);
-    }
-    if (!title.isEmpty()) {
-        printf("    title               : %s \n", qPrintable(title));
-    }
-    if (!description.isEmpty()) {
-        printf("    description         : %s \n", qPrintable(description));
-    }
-    if (!videoManifestUrl.isEmpty()) {
-        printf("    video-manifest-url  : %s \n", qPrintable(videoManifestUrl));
-    }
-    if (!videoResourceUrl.isEmpty()) {
-        printf("    video-resource-url  : %s \n", qPrintable(videoResourceUrl));
-    }
+QString *VideoModel::getVideoResourceUrl() {
+    return 0; //&videoResourceUrl;
 }
+
+void VideoModel::print() {
+    videoEntries.print();
+}
+
 

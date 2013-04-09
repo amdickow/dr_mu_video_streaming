@@ -1,16 +1,23 @@
 #ifndef MAINCONTROLLER_H
 #define MAINCONTROLLER_H
 
-#include "IMainController.h"
-#include "DRSession.h"
+#include <QObject>
+#include <QByteArray>
 #include <QString>
 #include <QList>
 #include <QStringListModel>
+#include "IMainController.h"
+#include "SlugModel.h"
+#include "VideoModel.h"
+#include "DRSession.h"
 
-class MainController
+class MainController : public QObject
 {
+    Q_OBJECT
+
 public:
     MainController(IMainController *client);
+    ~MainController();
 
     enum ControllerState {
         kIdle,
@@ -21,17 +28,24 @@ public:
 
     void getProgramDetails(int index);
 
+public slots:
+    void programsDownloadDone(QByteArray *data);
+    void videoDownloadDone(QByteArray *data);
+
 private:
     MainController();   // disable default constructor
 
-    void UpdateSlugsModel(QList<QString>& list);
-    void UpdateVideoModel(QList<QString>& list);
+    void updateSlugsModel(QList<QString>& list);
+    void updateVideoModel(QList<QString>& list);
 
     IMainController *client;
     ControllerState state;
+    int selectedVideoIndex;
     QList<DRSession*> sessionList;
     QStringListModel* slugsListModel;
     QStringListModel* videoListModel;
+    SlugModel *slugsModel;
+    VideoModel * videoModel;
 };
 
 #endif // MAINCONTROLLER_H

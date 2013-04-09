@@ -19,20 +19,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::Progress(double current, double total)
+void MainWindow::progress(double current, double total)
 {
 
 }
 
-void MainWindow::SlugsChanged(QStringListModel *model)
+void MainWindow::slugsChanged(QStringListModel *model)
 {
     ui->slugsView->setModel(model);
     ui->refreshButton->setEnabled(true);
 }
 
-void MainWindow::VideosChanged(QStringListModel *model, QString *header)
+void MainWindow::videosChanged(QStringListModel *model, const QString &header)
 {
-    ui->slugHeader->setText(*header);
+    ui->slugHeader->setText(header);
+    ui->downloadView->setModel(model);
 }
 
 
@@ -61,7 +62,6 @@ void MainWindow::on_fetchButton_released()
         controller->getProgramDetails(currentSlugSelection);
     }
 }
-
 
 void MainWindow::on_actionAbout_triggered()
 {

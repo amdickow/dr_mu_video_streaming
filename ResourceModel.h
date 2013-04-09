@@ -1,29 +1,29 @@
 #ifndef RESOURCEMODEL_H
 #define RESOURCEMODEL_H
 
+#include <QJsonArray>
 #include <string>
 #include <vector>
 
-#include "libjson/libjson.h"
 
-#include "BaseModel.h"
 
-class ResourceModel : public BaseModel
+#include "JsonHandlerBase.h"
+
+class ResourceModel : public JsonHandlerBase
 {
 public:
     ResourceModel();
-    ResourceModel(const char* data);
 
-    unsigned int GetResourceId();
-    std::string *GetName();
-    std::string *GetDownloadUri(int index);
+    unsigned int getResourceId();
+    std::string *getName();
+    std::string *getDownloadUri(int index);
 
-    void Print();
+    void print();
 
-    virtual void ProcessJson(JSONNODE *node);
+    virtual void processJsonArray(const QJsonArray &node);
 
 private:
-    void ProcessLinks(JSONNODE *node);
+    void processLinks(QJsonObject *node);
 
     unsigned int resId;
     std::string name;

@@ -2,57 +2,61 @@
 
 #include <stdio.h>
 #include <QString>
-//#include <string.h>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QVariantList>
+#include <QVariant>
+#include <QList>
 
 
-#include "libjson/libjson.h"
+SlugModel::SlugModel() : JsonHandlerBase() { }
 
-SlugModel::SlugModel() : BaseModel(0) { }
+void SlugModel::processJsonArray(const QJsonArray &node) {
 
-SlugModel::SlugModel(const char* data) : BaseModel(data) { }
+    printf("DEBUG: processJsonArray() >>\n");
 
-void SlugModel::ProcessJson(JSONNODE *node) {
-    JSONNODE_ITERATOR begin = json_begin(node);
-    JSONNODE_ITERATOR end   = json_end(node);
+    foreach (QVariant item, node.toVariantList()) {
+        //printf("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
+        if (item.canConvert(QMetaType::QVariantMap)) {
+            QJsonObject jObj = QJsonObject::fromVariantMap(item.toMap());
+            //printf("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
 
-    printf("DEBUG: ProcessJson() >>\n");
-
-    while(begin != end) {
-        if (json_type(*begin) == JSON_ARRAY ||
-            json_type(*begin) == JSON_NODE) {
-            ProcessJson(*begin);
+            slugs.push_back(jObj.value("slug").toString());
+            //printf("DEBUG:      jObj.value(slug)=%s\n",qPrintable(slug->slug));
+            titles.push_back(jObj.value("title").toString());
+            //printf("DEBUG:      jObj.value(title)=%s\n",qPrintable(slug->title));
         }
-
-        json_char *name = json_name(*begin);
-
-        // look for slug's
-        if (strcmp(name, "slug") == 0) {
-            json_char *value = json_as_string(*begin);
-            slugs.push_back(QString((const char*) value));
-            printf("DEBUG: ProcessJson() found slug, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-        json_free(name);
-        ++begin;
-    }
-    //json_free(begin);
-    //json_free(end);
-}
-
-void SlugModel::Print() {
-    printf("DEBUG Print() >>\nslugs.size=%d\n",(int)slugs.size());
-    for (QList<QString>::iterator it=slugs.begin(); it != slugs.end(); ++it) {
-      printf("slugs: %s \n", qPrintable((QString)*it));
     }
 }
 
+void SlugModel::print() {
+    printf("DEBUG:      slug count: %d\n", titles.size());
+    foreach (QString title, titles) {
+        printf("DEBUG:      slug: %s\n",qPrintable(title));
+    }
+}
 
-QString *SlugModel::Get(int index) {
+QList<QString> &SlugModel::getSlugs() {
+    return slugs;
+}
+
+QList<QString> &SlugModel::getTitles() {
+    return titles;
+}
+
+const QString &SlugModel::getSlugAt(int index) {
     if (index < (int)slugs.size()) {
-        return (new QString(slugs.at(index)));
+        return (slugs.at(index));
     } else {
         return 0;
     }
 }
 
+const QString &SlugModel::getTitleAt(int index) {
+    if (index < (int)titles.size()) {
+        return (titles.at(index));
+    } else {
+        return 0;
+    }
+}
 

@@ -1,30 +1,33 @@
 #ifndef SLUGMODEL_H
 #define SLUGMODEL_H
 
+#include <QJsonArray>
 #include <QString>
 #include <QList>
 
-#include "libjson/libjson.h"
 
-#include "BaseModel.h"
 
-class SlugModel : public BaseModel
+#include "JsonHandlerBase.h"
+
+class SlugModel : public JsonHandlerBase
 {
 public:
     SlugModel();
-    SlugModel(const char* data);
 
-    QString *Get(int index);
-    int GetSize();
+    const QString &getSlugAt(int index);
+    const QString &getTitleAt(int index);
+    int getSize();
 
-    QList<QString> &GetSlugs() {return slugs;}
+    QList<QString> &getSlugs();
+    QList<QString> &getTitles();
 
-    void Print();
+    void print();
 
-    virtual void ProcessJson(JSONNODE *node);
+    virtual void processJsonArray(const QJsonArray &node);
 
 private:
     QList<QString> slugs;
+    QList<QString> titles;
 };
 
 #endif // SLUGMODEL_H

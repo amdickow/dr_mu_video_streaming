@@ -1,42 +1,52 @@
 #ifndef VIDEOMODEL_H
 #define VIDEOMODEL_H
 
+#include <QJsonArray>
 #include <QString>
+#include <QList>
 
-#include "libjson/libjson.h"
+#include "JsonHandlerBase.h"
 
-#include "BaseModel.h"
+struct VideoEntry {
+    unsigned int id;
+    QString title;
+    QString description;
+    QString videoManifestUrl;
+    QString videoResourceUrl;
+};
 
-class VideoModel : public BaseModel
+class VideoEntries {
+public:
+    QList<QString> &getTitles();
+
+    void add(VideoEntry *video);
+
+    void print();
+
+private:
+    QList<int> ids;
+    QList<QString> titles;
+    QList<QString> videoResourceUrls;
+};
+
+class VideoModel : public JsonHandlerBase
 {
 public:
     VideoModel();
-    VideoModel(const char* data);
 
-    struct VideoEntry {
-        unsigned int id;
-        QString title;
-        QString description;
-        QString videoManifestUrl;
-        QString videoResourceUrl;
-    };
+    unsigned int getId();
+    QString *getDescription();
+    QString *getVideoResourceUrl();
 
-    unsigned int GetId();
-    QString *GetDescription();
-    QString *GetTitle();
-    QString *GetVideoManifestUrl();
-    QString *GetVideoResourceUrl();
+    QList<QString> &getTitles();
 
-    VideoEntry* GetVideoEntry(int index);
-    QList<VideoEntry*> GetVideoEntries();
+    void print();
 
-    void Print();
-
-    virtual void ProcessJson(JSONNODE *node);
+    virtual void processJsonArray(const QJsonArray &node);
 
 private:
     unsigned int id;
-    QList<VideoModel::VideoEntry*> videoEntries;
+    VideoEntries videoEntries;
 };
 
 #endif // VIDEOMODEL_H

@@ -19,11 +19,11 @@ public:
     ~MainWindow();
 
     /// Interface provided by IMainController
-    void Progress(double current, double total);
+    void progress(double current, double total);
 
-    void SlugsChanged(QStringListModel *model);
+    void slugsChanged(QStringListModel *model);
 
-    void VideosChanged(QStringListModel *model, QString *header);
+    void videosChanged(QStringListModel *model, const QString &header);
 
 
     

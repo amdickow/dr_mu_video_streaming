@@ -7,9 +7,9 @@ class IMainController
 {
 public:
 
-    virtual void Progress(double current, double total) = 0;
-    virtual void SlugsChanged(QStringListModel *model) = 0;
-    virtual void VideosChanged(QStringListModel *model, QString *header) = 0;
+    virtual void progress(double current, double total) = 0;
+    virtual void slugsChanged(QStringListModel *model) = 0;
+    virtual void videosChanged(QStringListModel *model, const QString &header) = 0;
 
 };
 

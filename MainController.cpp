@@ -1,57 +1,55 @@
+#include <QObject>
 #include "MainController.h"
 #include "DRSession.h"
 #include "SlugModel.h"
 #include "VideoModel.h"
+#include <QByteArray>
 
 
 using namespace std;
 
 MainController::MainController(IMainController *client) :
+    state(MainController::kIdle),
+    selectedVideoIndex(-1),
     slugsListModel(0),
-    videoListModel(0)
+    videoListModel(0),
+    slugsModel(0),
+    videoModel(0)
 {
      this->client = client;
+}
+
+MainController::~MainController() {
+    if (slugsModel) delete slugsModel;
+    if (videoModel) delete videoModel;
 }
 
 
 void MainController::getProgramSeries()
 {
     DRSession* session = new DRSession();
-    SlugModel* slugsModel = new SlugModel();
 
+    connect(session, SIGNAL(done(QByteArray*)),
+            this, SLOT(programsDownloadDone(QByteArray*)));
+
+    session->setup(QString("http://www.dr.dk/nu/api/programseries"));
+    session->execute();
     sessionList.push_back(session);
-
-    session->Init();
-    session->Setup(string("http://www.dr.dk/nu/api/programseries"));
-
-    slugsModel->Process(session->Execute());
-    slugsModel->Print();
-    UpdateSlugsModel(slugsModel->GetSlugs());
-
-    client->SlugsChanged(slugsListModel);
 }
 
-void MainController::getProgramDetails(int index)
-{
-    DRSession* session = new DRSession();
-    VideoModel* videoModel = new VideoModel();
-    QString program = (QString) slugsListModel->stringList().at(index);
+void MainController::programsDownloadDone(QByteArray *data) {
+    slugsModel = new SlugModel();
+    slugsModel->create(data,0);
+    slugsModel->process();
+    slugsModel->print();
 
-    sessionList.push_back(session);
+    updateSlugsModel(slugsModel->getTitles());
+    client->slugsChanged(slugsListModel);
 
-    string slugUrl = string("http://www.dr.dk/nu/api/programseries/");
-    slugUrl.append(program.toStdString());
-    slugUrl.append("/videos");
-
-    session->Init();
-    session->Setup(slugUrl);
-    videoModel->Process(session->Execute());
-    videoModel->Print();
-
-    client->VideosChanged(0, videoModel->GetTitle());
+    // TODO clean the QByteArray passed from the signal
 }
 
-void MainController::UpdateSlugsModel(QList<QString>& list)
+void MainController::updateSlugsModel(QList<QString>& list)
 {
     if(!list.empty()) {
         if(!slugsListModel) {
@@ -62,7 +60,37 @@ void MainController::UpdateSlugsModel(QList<QString>& list)
     }
 }
 
-void MainController::UpdateVideoModel(QList<QString>& list)
+void MainController::getProgramDetails(int index)
+{
+    DRSession* session = new DRSession();
+    const QString program = slugsModel->getSlugAt(index);
+    QString slugUrl = QString("http://www.dr.dk/nu/api/programseries/");
+
+    slugUrl.append(program);
+    slugUrl.append("/videos");
+
+    selectedVideoIndex = index;
+
+    connect(session, SIGNAL(done(QByteArray*)),
+            this, SLOT(videoDownloadDone(QByteArray*)));
+
+    session->setup(slugUrl);
+    session->execute();
+    sessionList.push_back(session);
+}
+
+void MainController::videoDownloadDone(QByteArray *data) {
+    videoModel = new VideoModel();
+    videoModel->create(data,0);
+    videoModel->process();
+    videoModel->print();
+
+    updateVideoModel(videoModel->getTitles());
+    client->videosChanged(videoListModel, slugsModel->getTitleAt(selectedVideoIndex));
+}
+
+
+void MainController::updateVideoModel(QList<QString>& list)
 {
     if(!list.empty()) {
         if(!videoListModel) {
