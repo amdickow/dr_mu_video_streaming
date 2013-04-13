@@ -21,6 +21,7 @@ DRSession::DRSession(bool saveToFile) :
 
 DRSession::~DRSession() {
     //do cleanup - not the same as clear()
+    clear();
 }
 
 bool DRSession::clear() {
@@ -84,6 +85,7 @@ void DRSession::httpFinished()
 
     reply->deleteLater();
     reply = 0;
+    finished();
 }
 #endif
 
@@ -92,7 +94,8 @@ void DRSession::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
 {
     //if (httpRequestAborted)
     //    return;
-    printf("DEBUG: updateDataReadProgress() bytesRead: %lld totalBytes: %lld", bytesRead, totalBytes);
+    qDebug("DEBUG: updateDataReadProgress() bytesRead: %lld totalBytes: %lld", bytesRead, totalBytes);
+    readProgress((int)bytesRead/1000, (int)totalBytes/1000);
 }
 #endif
 
@@ -113,10 +116,10 @@ void DRSession::dumpToFile() {
 
     file = fopen(fileStr.c_str(), "w");
 
-    printf("DEBUG: dumpToFile() pFile=%d\n", file);
+    qDebug("DEBUG: dumpToFile() pFile=%d\n", file);
 
     if (file) {
-        fprintf(file, "%s\n", (const char*)this->memory);
+        fqDebug(file, "%s\n", (const char*)this->memory);
         fclose(file);
     }
 }
@@ -133,10 +136,10 @@ char * DRSession::readFromFile(size_t *size) {
     fileStr.append(".txt");
     file = fopen(fileStr.c_str() , "r");
 
-    printf("DEBUG: fileStr=%s\n", fileStr.c_str());
+    qDebug("DEBUG: fileStr=%s\n", fileStr.c_str());
 
     if (file==0) {
-        printf("DEBUG: fopen() error\n");
+        qDebug("DEBUG: fopen() error\n");
         *size = 0;
     } else {
         long lSize;
@@ -154,7 +157,7 @@ char * DRSession::readFromFile(size_t *size) {
         // copy the file into the buffer:
         result = fread (buffer,1,lSize,file);
         if (result != (size_t)lSize) {
-            printf("DEBUG: fread() error\n");
+            qDebug("DEBUG: fread() error\n");
             *size = 0;
         } else {
             *size = (size_t)lSize;

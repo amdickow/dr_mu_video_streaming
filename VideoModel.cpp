@@ -23,17 +23,17 @@ QList<QString> &VideoEntries::getTitles() {
 }
 
 void VideoEntries::print() {
-    printf("DEBUG print() >>\n");
+    qDebug("DEBUG print() >>\n");
     int size = ids.size();
     for (int i = 0; i < size; i++) {
         if(ids.at(i)) {
-            printf("    id                  : %d \n", ids.at(i));
+            qDebug("    id                  : %d \n", ids.at(i));
         }
         if (!titles.at(i).isEmpty()) {
-            printf("    title               : %s \n", qPrintable(titles.at(i)));
+            qDebug("    title               : %s \n", qPrintable(titles.at(i)));
         }
         if (!videoResourceUrls.at(i).isEmpty()) {
-            printf("    video-resource-url  : %s \n", qPrintable(videoResourceUrls.at(i)));
+            qDebug("    video-resource-url  : %s \n", qPrintable(videoResourceUrls.at(i)));
         }
     }
 }
@@ -42,21 +42,21 @@ VideoModel::VideoModel() : JsonHandlerBase(), id(0) { }
 
 void VideoModel::processJsonArray(const QJsonArray &node) {
 
-    printf("DEBUG: processJsonArray() >>\n");
+    qDebug("DEBUG: processJsonArray() >>\n");
 
     foreach (QVariant item, node.toVariantList()) {
-        //printf("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
+        //qDebug("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
         if (item.canConvert(QMetaType::QVariantMap)) {
             QJsonObject jObj = QJsonObject::fromVariantMap(item.toMap());
-            //printf("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
+            //qDebug("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
 
             VideoEntry *video = new VideoEntry();
             video->id = (int)jObj.value("id").toDouble();
-            printf("DEBUG:      jObj.value(id)=%d\n",video->id);
+            qDebug("DEBUG:      jObj.value(id)=%d\n",video->id);
             video->title.append(jObj.value("title").toString());
-            printf("DEBUG:      jObj.value(title)=%s\n",qPrintable(video->title));
+            qDebug("DEBUG:      jObj.value(title)=%s\n",qPrintable(video->title));
             video->videoResourceUrl.append(jObj.value("videoResourceUrl").toString());
-            printf("DEBUG:      jObj.value(videoResourceUrl)=%s\n",qPrintable(video->videoResourceUrl));
+            qDebug("DEBUG:      jObj.value(videoResourceUrl)=%s\n",qPrintable(video->videoResourceUrl));
             videoEntries.add(video);
         }
     }

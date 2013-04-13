@@ -11,11 +11,11 @@ bool JsonHandlerBase::create(QByteArray *data, int size) {
 }
 
 void JsonHandlerBase::process() {
-    printf("DEBUG: JsonHandlerBase::process() >> \n");
+    qDebug("DEBUG: JsonHandlerBase::process() >> \n");
 
     if (!doc.isNull()) {
         if (doc.isArray()) {
-            printf("DEBUG:      array size=%d\n",(int)doc.array().size());
+            qDebug("DEBUG:      array size=%d\n",(int)doc.array().size());
             this->processJsonArray(doc.array());
         } else {
             // isObject then?
@@ -23,6 +23,6 @@ void JsonHandlerBase::process() {
         }
 
     } else  {
-        printf("DEBUG:      Parsing failed!\n");
+        qDebug("DEBUG:      Parsing failed!\n");
     }
 }

@@ -36,21 +36,38 @@ public:
      */
     bool setup(QString url);
 
-    /**
-     * Execute the session
-     *
-     * /return char*  Pointer to fetched data
-     */
-    void execute();
+
 
 #ifndef DEBUG_READ_DATA_FROM_FILE
 public slots:
+    /**
+     * Execute the session
+     *
+     * Calling this method will initiate the downloading and
+     * during the process the progress signal will be sent indication progress
+     */
+    void execute();
     void httpFinished();
     void updateDataReadProgress(qint64 bytesRead, qint64 totalBytes);
 #endif
 
 signals:
+    void error(QString error);
+    /**
+     * @brief done
+     *
+     * This is invoked when downloading is done
+     *
+     * @param data  downloaded data
+     */
     void done(QByteArray *data);
+    void readProgress(qint64 bytesRead, qint64 totalKb);
+    /**
+     * @brief finished
+     *
+     * This is invoked once the download session has completed
+     */
+    void finished();
 
 private:
     bool toFile;

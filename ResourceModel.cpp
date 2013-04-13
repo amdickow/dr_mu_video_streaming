@@ -12,7 +12,7 @@ ResourceModel::ResourceModel() : JsonHandlerBase(), resId(0) { }
 
 void ResourceModel::processJsonArray(const QJsonArray &node) {
 
-    printf("DEBUG: processJsonArray() >>\n");
+    qDebug("DEBUG: processJsonArray() >>\n");
 #if 0
     while(begin != end) {
 // this should not be needed
@@ -27,21 +27,21 @@ void ResourceModel::processJsonArray(const QJsonArray &node) {
         if (strcmp(name, "resourceId") == 0) {
             json_int_t value = json_as_int(*begin);
             resId = value;
-            printf("DEBUG: processJsonArray() found resourceId, value=%d\n", (int) value);
+            qDebug("DEBUG: processJsonArray() found resourceId, value=%d\n", (int) value);
         }
 
         if (strcmp(name, "name") == 0) {
             json_char *value = json_as_string(*begin);
             this->name.append(value);
-            printf("DEBUG: processJsonArray() found name, value=%s\n", (const char*) value);
+            qDebug("DEBUG: processJsonArray() found name, value=%s\n", (const char*) value);
             json_free(value);
         }
 
         if (strcmp(name, "links") == 0) {
-            printf("    json_type() type=%d size=%d\n", json_type(*begin), json_size(*begin));
+            qDebug("    json_type() type=%d size=%d\n", json_type(*begin), json_size(*begin));
             if (json_type(*begin) == JSON_ARRAY ||
                 json_type(*begin) == JSON_NODE) {
-                printf("DEBUG: processJsonArray() found links!\n");
+                qDebug("DEBUG: processJsonArray() found links!\n");
                 ProcessLinks(*begin);
             }
         }
@@ -57,7 +57,7 @@ void ResourceModel::processJsonArray(const QJsonArray &node) {
 void ResourceModel::processLinks(QJsonObject *node) {
 #if 0
 
-    printf("DEBUG: ProcessLinks() >> node type=%d\n", json_type(*begin));
+    qDebug("DEBUG: ProcessLinks() >> node type=%d\n", json_type(*begin));
 
     while(begin != end) {
         if (json_type(*begin) == JSON_ARRAY ||
@@ -68,7 +68,7 @@ void ResourceModel::processLinks(QJsonObject *node) {
         if (strcmp(name, "uri") == 0) {
             json_char *value = json_as_string(*begin);
             downloadUri.push_back(string(value));
-            printf("DEBUG: processJsonArray() found uri, value=%s\n", (const char*) value);
+            qDebug("DEBUG: processJsonArray() found uri, value=%s\n", (const char*) value);
             json_free(value);
         }
         json_free(name);
@@ -92,18 +92,18 @@ std::string *ResourceModel::getDownloadUri(int index) {
 
 
 void ResourceModel::print() {
-    printf("DEBUG: print() >>\n");
+    qDebug("DEBUG: print() >>\n");
 
     if(resId) {
-        printf("    resource-id         : %d \n", resId);
+        qDebug("    resource-id         : %d \n", resId);
     }
     if (!name.empty()) {
-        printf("    name                : %s \n", name.c_str());
+        qDebug("    name                : %s \n", name.c_str());
     }
 
     for (int i = 0; i < downloadUri.size(); i++) {
         if (!(downloadUri.at(i)).empty()) {
-            printf("    uri[%d]         : %s \n", i, (downloadUri.at(i)).c_str());
+            qDebug("    uri[%d]         : %s \n", i, (downloadUri.at(i)).c_str());
         }
     }
 

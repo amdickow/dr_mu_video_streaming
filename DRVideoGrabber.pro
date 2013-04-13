@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     SlugModel.cpp \
     ResourceModel.cpp \
     DRSession.cpp \
-    LoaderThread.cpp \
     JsonHandlerBase.cpp
 
 HEADERS  += MainWindow.h \
@@ -33,8 +32,6 @@ HEADERS  += MainWindow.h \
     SlugModel.h \
     ResourceModel.h \
     DRSession.h \
-    IMainController.h \
-    LoaderThread.h \
     JsonHandlerBase.h
 
 
