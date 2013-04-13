@@ -10,6 +10,7 @@
 #include <QThread>
 #include "SlugModel.h"
 #include "VideoModel.h"
+#include "ResourceModel.h"
 #include "DRSession.h"
 
 class MainController : public QObject
@@ -25,18 +26,22 @@ public:
         kRunning
     };
 
-    void getProgramSeries();
-
-    void getProgramDetails(int index);
+    void getSlugs();
+    void getVideos(int index);
+    void getResourceUriBitrates(int index);
+    void getResource(int index);
 
 signals:
     void actionProgress(qint64 value, qint64 total);
     void slugsChanged(QStringListModel *model);
     void videosChanged(QStringListModel *model, const QString &header);
+    void downloaded();
 
 public slots:
-    void programsDownloadDone(QByteArray *data);
-    void videoDownloadDone(QByteArray *data);
+    void slugsDownloadDone(QByteArray *data);
+    void videosDownloadDone(QByteArray *data);
+    void resourceUriDownloadDone(QByteArray *data);
+    void resourceDownloadDone();
     void dataReadProgress(qint64 bytesRead, qint64 totalKb);
 
 private:
@@ -45,13 +50,16 @@ private:
     void startDownload(DRSession *session);
 
     ControllerState state;
+    int selectedSlugIndex;
     int selectedVideoIndex;
+    int selectedBitrateIndex;
     QList<DRSession*> sessionList;
     QList<QThread*> threadList;
     QStringListModel* slugsListModel;
     QStringListModel* videoListModel;
     SlugModel *slugsModel;
     VideoModel * videoModel;
+    ResourceModel *resourceModel;
 };
 
 #endif // MAINCONTROLLER_H

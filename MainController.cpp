@@ -3,6 +3,7 @@
 #include "DRSession.h"
 #include "SlugModel.h"
 #include "VideoModel.h"
+#include "ResourceModel.h"
 #include <QByteArray>
 #include <QThread>
 
@@ -11,7 +12,9 @@ using namespace std;
 
 MainController::MainController() :
     state(MainController::kIdle),
+    selectedSlugIndex(-1),
     selectedVideoIndex(-1),
+    selectedBitrateIndex(-1),
     slugsListModel(0),
     videoListModel(0),
     slugsModel(0),
@@ -23,12 +26,12 @@ MainController::~MainController() {
     if (videoModel) delete videoModel;
 }
 
-void MainController::getProgramSeries()
+void MainController::getSlugs()
 {
     DRSession* session = new DRSession();
 
     connect(session, SIGNAL(done(QByteArray*)),
-            this, SLOT(programsDownloadDone(QByteArray*)), Qt::AutoConnection);
+            this, SLOT(slugsDownloadDone(QByteArray*)), Qt::AutoConnection);
 
     connect(session, SIGNAL(readProgress(qint64, qint64)),
             this, SLOT(dataReadProgress(qint64, qint64)), Qt::AutoConnection);
@@ -38,7 +41,7 @@ void MainController::getProgramSeries()
     startDownload(session);
 }
 
-void MainController::programsDownloadDone(QByteArray *data) {
+void MainController::slugsDownloadDone(QByteArray *data) {
     slugsModel = new SlugModel();
     slugsModel->create(data,0);
     slugsModel->process();
@@ -62,7 +65,7 @@ void MainController::updateSlugsModel(QList<QString>& list)
     }
 }
 
-void MainController::getProgramDetails(int index)
+void MainController::getVideos(int index)
 {
     DRSession* session = new DRSession();
     const QString program = slugsModel->getSlugAt(index);
@@ -71,10 +74,10 @@ void MainController::getProgramDetails(int index)
     slugUrl.append(program);
     slugUrl.append("/videos");
 
-    selectedVideoIndex = index;
+    selectedSlugIndex = index;
 
     connect(session, SIGNAL(done(QByteArray*)),
-            this, SLOT(videoDownloadDone(QByteArray*)));
+            this, SLOT(videosDownloadDone(QByteArray*)));
 
     connect(session, SIGNAL(readProgress(qint64, qint64)),
             this, SLOT(dataReadProgress(qint64, qint64)));
@@ -84,7 +87,7 @@ void MainController::getProgramDetails(int index)
     startDownload(session);
 }
 
-void MainController::videoDownloadDone(QByteArray *data) {
+void MainController::videosDownloadDone(QByteArray *data) {
 
     videoModel = new VideoModel();
     videoModel->create(data,0);
@@ -93,7 +96,7 @@ void MainController::videoDownloadDone(QByteArray *data) {
 
     updateVideoModel(videoModel->getTitles());
 
-    videosChanged(videoListModel, slugsModel->getTitleAt(selectedVideoIndex));
+    videosChanged(videoListModel, slugsModel->getTitleAt(selectedSlugIndex));
 }
 
 
@@ -106,6 +109,63 @@ void MainController::updateVideoModel(QList<QString>& list)
             videoListModel->setStringList(list);
         }
     }
+}
+
+
+// TODO this method should return bitrates for the different downloads
+//      and this needs to be presented in a dialog to the user to be chosen from
+//      on bitrate selected and click on "download" the file will begin downloading
+void MainController::getResourceUriBitrates(int index) {
+    DRSession* session = new DRSession();
+    const QString videoUrl = videoModel->getVideoResourceUrlAt(index);
+
+    selectedVideoIndex = index;
+
+    connect(session, SIGNAL(done(QByteArray*)),
+            this, SLOT(resourceUriDownloadDone(QByteArray*)));
+
+    connect(session, SIGNAL(readProgress(qint64, qint64)),
+            this, SLOT(dataReadProgress(qint64, qint64)));
+
+    session->setup(videoUrl);
+
+    startDownload(session);
+}
+
+void MainController::resourceUriDownloadDone(QByteArray *data) {
+    resourceModel = new ResourceModel();
+    resourceModel->create(data,0);
+    resourceModel->process();
+    resourceModel->print();
+
+    getResource((int)2);
+}
+
+void MainController::getResource(int index) {
+    DRSession* session = new DRSession();
+    const QString downloadUri = resourceModel->getDownloadUri(index);
+    QString preparedUri = QString("http://vodfiles.dr.dk/");
+    int delimPos = downloadUri.indexOf("CMS/Resources/");
+    preparedUri.append(downloadUri.right(delimPos));
+
+    qDebug("DEBUG: getResource() index: %d uri: %s\n", index, qPrintable(preparedUri));
+
+    selectedBitrateIndex = index;
+
+    connect(session, SIGNAL(finished()),
+            this, SLOT(resourceDownloadDone()));
+
+    connect(session, SIGNAL(readProgress(qint64, qint64)),
+            this, SLOT(dataReadProgress(qint64, qint64)));
+
+    session->setup(preparedUri);
+
+    startDownload(session);
+}
+
+void MainController::resourceDownloadDone() {
+    qDebug("DEBUG: resourceDownloadDone() >>\n");
+    downloaded();
 }
 
 void MainController::dataReadProgress(qint64 bytesRead, qint64 totalKb) {

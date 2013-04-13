@@ -16,14 +16,21 @@ void VideoEntries::add(VideoEntry *video) {
     ids.push_back(video->id);
     titles.push_back(video->title);
     videoResourceUrls.push_back(video->videoResourceUrl);
+    delete video;
 }
 
 QList<QString> &VideoEntries::getTitles() {
     return titles;
 }
 
+const QString &VideoEntries::getVideoResUrlAt(int index) {
+    if (index < videoResourceUrls.size()) {
+        return videoResourceUrls.at(index);
+    }
+    return 0;
+}
+
 void VideoEntries::print() {
-    qDebug("DEBUG print() >>\n");
     int size = ids.size();
     for (int i = 0; i < size; i++) {
         if(ids.at(i)) {
@@ -75,11 +82,12 @@ QList<QString> &VideoModel::getTitles() {
 }
 
 
-QString *VideoModel::getVideoResourceUrl() {
-    return 0; //&videoResourceUrl;
+const QString &VideoModel::getVideoResourceUrlAt(int index) {
+    return videoEntries.getVideoResUrlAt(index);
 }
 
 void VideoModel::print() {
+    qDebug("DEBUG print() >>\n");
     videoEntries.print();
 }
 

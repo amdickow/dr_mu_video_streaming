@@ -18,6 +18,7 @@ struct VideoEntry {
 class VideoEntries {
 public:
     QList<QString> &getTitles();
+    const QString &getVideoResUrlAt(int index);
 
     void add(VideoEntry *video);
 
@@ -36,7 +37,7 @@ public:
 
     unsigned int getId();
     QString *getDescription();
-    QString *getVideoResourceUrl();
+    const QString &getVideoResourceUrlAt(int index);
 
     QList<QString> &getTitles();
 

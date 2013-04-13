@@ -5,7 +5,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    currentSlugSelection(-1)
+    currentSlugSelection(-1),
+    currentVideoSelection(-1)
 {
     ui->setupUi(this);
 
@@ -48,6 +49,7 @@ void MainWindow::slugsChanged(QStringListModel *model)
 {
     if (progressDialog) {
         progressDialog->hide();
+        progressDialog->reset();
     }
     ui->slugsView->setModel(model);
     ui->refreshButton->setEnabled(true);
@@ -57,9 +59,11 @@ void MainWindow::videosChanged(QStringListModel *model, const QString &header)
 {
     if (progressDialog) {
         progressDialog->hide();
+        progressDialog->reset();
     }
     ui->slugHeader->setText(header);
     ui->downloadView->setModel(model);
+    ui->fetchButton->setEnabled(true);
 }
 
 void MainWindow::on_refreshButton_released()
@@ -70,30 +74,57 @@ void MainWindow::on_refreshButton_released()
         progressDialog->show();
     }
     ui->refreshButton->setEnabled(false);
-    controller->getProgramSeries();
+    controller->getSlugs();
 }
 
 void MainWindow::on_slugsView_clicked(const QModelIndex &index)
 {
-    ui->fetchButton->setEnabled(true);
-
-    //ensure that we are not already processing
-    if(0 > currentSlugSelection) {
+    if ((0 <= currentSlugSelection) || (index.row() != currentSlugSelection)) {
         currentSlugSelection = index.row();
+        ui->fetchButton->setEnabled(true);
+    } else {
+        // no change
     }
 }
 
 void MainWindow::on_fetchButton_released()
 {
     if (progressDialog) {
-        progressDialog->setWindowTitle(tr("FETCHING"));
+        progressDialog->setWindowTitle(tr("FETCH"));
         //progressDialog->setLabelText(tr("Fecthing episodes for %s",slugsModel->getTitleAt(selectedVideoIndex).toUtf8()));
         progressDialog->show();
     }
     ui->fetchButton->setEnabled(false);
     // shouldn't be nescessary but let's check anyway
-    if(currentSlugSelection >= 0) {
-        controller->getProgramDetails(currentSlugSelection);
+    if (currentSlugSelection >= 0) {
+        controller->getVideos(currentSlugSelection);
+    }
+}
+
+void MainWindow::on_downloadView_clicked(const QModelIndex &index)
+{
+    if ((0 > currentVideoSelection) || (index.row() != currentVideoSelection)) {
+        currentVideoSelection = index.row();
+        ui->downloadButton->setEnabled(true);
+    } else {
+        // no change
+    }
+}
+
+void MainWindow::on_downloadButton_released()
+{
+    if (progressDialog) {
+        progressDialog->setWindowTitle(tr("DOWNLOAD"));
+        //progressDialog->setLabelText(tr("Fecthing episodes for %s",slugsModel->getTitleAt(selectedVideoIndex).toUtf8()));
+        progressDialog->show();
+    }
+    ui->fetchButton->setEnabled(false);
+}
+
+void MainWindow::downloadDone() {
+    if (progressDialog) {
+        progressDialog->hide();
+        progressDialog->reset();
     }
 }
 
@@ -101,3 +132,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     // About was clicked.. show something()
 }
+
+
+
+

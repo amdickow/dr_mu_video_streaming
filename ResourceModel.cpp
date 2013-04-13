@@ -1,5 +1,11 @@
 #include "ResourceModel.h"
 
+#include <QString>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QVariantList>
+#include <QVariant>
+#include <QList>
 #include <stdio.h>
 #include <string.h>
 
@@ -8,73 +14,75 @@
 
 using namespace std;
 
+void ResourceEntries::add(ResourceEntry *entry) {
+    uris.push_back(entry->uri);
+    bitRates.push_back(entry->bitRate);
+    delete entry;
+}
+
+QList<int> &ResourceEntries::getBitrates() {
+    return bitRates;
+}
+
+const QString &ResourceEntries::getUriAt(int index) {
+    if (index < uris.size()) {
+        return uris.at(index);
+    }
+    return 0;
+}
+
+void ResourceEntries::print() {
+    int size = uris.size();
+    for (int i = 0; i < size; i++) {
+        if (!uris.at(i).isEmpty()) {
+            qDebug("    uri               : %s \n", qPrintable(uris.at(i)));
+        }
+        if(bitRates.at(i)) {
+            qDebug("    bitrate(Kbps)     : %d \n", bitRates.at(i));
+        }
+    }
+}
+
 ResourceModel::ResourceModel() : JsonHandlerBase(), resId(0) { }
 
 void ResourceModel::processJsonArray(const QJsonArray &node) {
 
     qDebug("DEBUG: processJsonArray() >>\n");
-#if 0
-    while(begin != end) {
-// this should not be needed
-        if (json_type(*begin) == JSON_ARRAY ||
-            json_type(*begin) == JSON_NODE) {
-            processJsonArray(*begin);
-        }
 
+    foreach (QVariant item, node.toVariantList()) {
+        //qDebug("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
+        if (item.canConvert(QMetaType::QVariantMap)) {
+            QJsonObject jObj = QJsonObject::fromVariantMap(item.toMap());
+            //qDebug("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
 
-        json_char *name = json_name(*begin);
+            name.append(jObj.value("name").toString());
+            qDebug("DEBUG:      jObj.value(title)=%s\n",qPrintable(name));
 
-        if (strcmp(name, "resourceId") == 0) {
-            json_int_t value = json_as_int(*begin);
-            resId = value;
-            qDebug("DEBUG: processJsonArray() found resourceId, value=%d\n", (int) value);
-        }
-
-        if (strcmp(name, "name") == 0) {
-            json_char *value = json_as_string(*begin);
-            this->name.append(value);
-            qDebug("DEBUG: processJsonArray() found name, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-
-        if (strcmp(name, "links") == 0) {
-            qDebug("    json_type() type=%d size=%d\n", json_type(*begin), json_size(*begin));
-            if (json_type(*begin) == JSON_ARRAY ||
-                json_type(*begin) == JSON_NODE) {
-                qDebug("DEBUG: processJsonArray() found links!\n");
-                ProcessLinks(*begin);
+            if (jObj.value("links").isArray()) {
+                processLinks(jObj.value("links").toArray());
             }
         }
-
-        json_free(name);
-        ++begin;
     }
-    //json_free(begin);
-    //json_free(end);
-    #endif
 }
 
-void ResourceModel::processLinks(QJsonObject *node) {
-#if 0
+void ResourceModel::processLinks(const QJsonArray &node) {
+    qDebug("DEBUG: processLinks() >>\n");
 
-    qDebug("DEBUG: ProcessLinks() >> node type=%d\n", json_type(*begin));
+    foreach (QVariant item, node.toVariantList()) {
+        //qDebug("DEBUG:      item.type()=%d, %s\n",(int)item.type(), item.typeName());
+        if (item.canConvert(QMetaType::QVariantMap)) {
+            QJsonObject jObj = QJsonObject::fromVariantMap(item.toMap());
+            //qDebug("DEBUG:      jObj.count()=%d\n",(int)jObj.count());
 
-    while(begin != end) {
-        if (json_type(*begin) == JSON_ARRAY ||
-            json_type(*begin) == JSON_NODE) {
-            ProcessLinks(*begin);
+            ResourceEntry *resource = new ResourceEntry();
+            resource->uri.append(jObj.value("uri").toString());
+            qDebug("DEBUG:      jObj.value(videoResourceUrl)=%s\n",qPrintable(resource->uri));
+
+            resource->bitRate = (int)jObj.value("bitrateKbps").toDouble();
+
+            entries.add(resource);
         }
-        json_char *name = json_name(*begin);
-        if (strcmp(name, "uri") == 0) {
-            json_char *value = json_as_string(*begin);
-            downloadUri.push_back(string(value));
-            qDebug("DEBUG: processJsonArray() found uri, value=%s\n", (const char*) value);
-            json_free(value);
-        }
-        json_free(name);
-        ++begin;
     }
-#endif
 }
 
 
@@ -82,30 +90,22 @@ unsigned int ResourceModel::getResourceId() {
     return resId;
 }
 
-std::string *ResourceModel::getName() {
-    return &name;
+const QString &ResourceModel::getName() {
+    return name;
 }
 
-std::string *ResourceModel::getDownloadUri(int index) {
-    return &(downloadUri.at(index));
+const QString &ResourceModel::getDownloadUri(int index) {
+    return entries.getUriAt(index);
 }
 
 
 void ResourceModel::print() {
     qDebug("DEBUG: print() >>\n");
 
-    if(resId) {
-        qDebug("    resource-id         : %d \n", resId);
-    }
-    if (!name.empty()) {
-        qDebug("    name                : %s \n", name.c_str());
+    if (!name.isEmpty()) {
+        qDebug("    name                : %s \n", qPrintable(name));
     }
 
-    for (int i = 0; i < downloadUri.size(); i++) {
-        if (!(downloadUri.at(i)).empty()) {
-            qDebug("    uri[%d]         : %s \n", i, (downloadUri.at(i)).c_str());
-        }
-    }
-
+    entries.print();
 }
 

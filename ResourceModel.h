@@ -1,13 +1,34 @@
 #ifndef RESOURCEMODEL_H
 #define RESOURCEMODEL_H
 
+#include <QList>
 #include <QJsonArray>
-#include <string>
+#include <QString>
 #include <vector>
 
 
 
 #include "JsonHandlerBase.h"
+
+struct ResourceEntry {
+    QString uri;
+    int bitRate;
+};
+
+class ResourceEntries
+{
+public:
+    QList<int> &getBitrates();
+    const QString &getUriAt(int index);
+
+    void add(ResourceEntry *entry);
+
+    void print();
+
+private:
+    QList<QString> uris;
+    QList<int> bitRates;
+};
 
 class ResourceModel : public JsonHandlerBase
 {
@@ -15,19 +36,19 @@ public:
     ResourceModel();
 
     unsigned int getResourceId();
-    std::string *getName();
-    std::string *getDownloadUri(int index);
+    const QString &getName();
+    const QString &getDownloadUri(int index);
 
     void print();
 
     virtual void processJsonArray(const QJsonArray &node);
 
 private:
-    void processLinks(QJsonObject *node);
+    void processLinks(const QJsonArray &node);
 
     unsigned int resId;
-    std::string name;
-    std::vector<std::string> downloadUri;
+    QString name;
+    ResourceEntries entries;
 };
 
 #endif // RESOURCEMODEL_H
