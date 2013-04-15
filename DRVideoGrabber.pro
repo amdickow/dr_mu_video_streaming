@@ -19,20 +19,20 @@ LIBS +=
 
 SOURCES += main.cpp\
         MainWindow.cpp \
-    MainController.cpp \
-    VideoModel.cpp \
-    SlugModel.cpp \
-    ResourceModel.cpp \
-    DRSession.cpp \
-    JsonHandlerBase.cpp
+    DRHttpSession.cpp \
+    JsonHandlerBase.cpp \
+    JsonHandlerSlug.cpp \
+    JsonHandlerResource.cpp \
+    JsonHandlerVideo.cpp \
+    MainUiController.cpp
 
 HEADERS  += MainWindow.h \
-    MainController.h \
-    VideoModel.h \
-    SlugModel.h \
-    ResourceModel.h \
-    DRSession.h \
-    JsonHandlerBase.h
+    JsonHandlerBase.h \
+    JsonHandlerSlug.h \
+    JsonHandlerResource.h \
+    JsonHandlerVideo.h \
+    MainUiController.h \
+    DRHttpSession.h
 
 
 FORMS    += MainWindow.ui

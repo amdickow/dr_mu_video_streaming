@@ -1,17 +1,17 @@
 #include <QObject>
-#include "MainController.h"
-#include "DRSession.h"
-#include "SlugModel.h"
-#include "VideoModel.h"
-#include "ResourceModel.h"
+#include "MainUiController.h"
+#include "DRHttpSession.h"
+#include "JsonHandlerSlug.h"
+#include "JsonHandlerVideo.h"
+#include "JsonHandlerResource.h"
 #include <QByteArray>
 #include <QThread>
 
 
 using namespace std;
 
-MainController::MainController() :
-    state(MainController::kIdle),
+MainUiController::MainUiController() :
+    state(MainUiController::kIdle),
     selectedSlugIndex(-1),
     selectedVideoIndex(-1),
     selectedBitrateIndex(-1),
@@ -21,14 +21,14 @@ MainController::MainController() :
     videoModel(0) {
 }
 
-MainController::~MainController() {
-    if (slugsModel) delete slugsModel;
-    if (videoModel) delete videoModel;
+MainUiController::~MainUiController() {
+    if (slugsModel) slugsModel->kill();
+    if (videoModel) videoModel->kill();
 }
 
-void MainController::getSlugs()
+void MainUiController::getSlugs()
 {
-    DRSession* session = new DRSession();
+    DRHttpSession* session = new DRHttpSession();
 
     connect(session, SIGNAL(done(QByteArray*)),
             this, SLOT(slugsDownloadDone(QByteArray*)), Qt::AutoConnection);
@@ -41,9 +41,9 @@ void MainController::getSlugs()
     startDownload(session);
 }
 
-void MainController::slugsDownloadDone(QByteArray *data) {
-    slugsModel = new SlugModel();
-    slugsModel->create(data,0);
+void MainUiController::slugsDownloadDone(QByteArray *data) {
+    slugsModel = new JsonHandlerSlug();
+    slugsModel->create(data);
     slugsModel->process();
     slugsModel->print();
 
@@ -54,7 +54,7 @@ void MainController::slugsDownloadDone(QByteArray *data) {
     // TODO clean the QByteArray passed from the signal
 }
 
-void MainController::updateSlugsModel(QList<QString>& list)
+void MainUiController::updateSlugsModel(QList<QString>& list)
 {
     if(!list.empty()) {
         if(!slugsListModel) {
@@ -65,9 +65,9 @@ void MainController::updateSlugsModel(QList<QString>& list)
     }
 }
 
-void MainController::getVideos(int index)
+void MainUiController::getVideos(int index)
 {
-    DRSession* session = new DRSession();
+    DRHttpSession* session = new DRHttpSession();
     const QString program = slugsModel->getSlugAt(index);
     QString slugUrl = QString("http://www.dr.dk/nu/api/programseries/");
 
@@ -87,20 +87,20 @@ void MainController::getVideos(int index)
     startDownload(session);
 }
 
-void MainController::videosDownloadDone(QByteArray *data) {
+void MainUiController::videosDownloadDone(QByteArray *data) {
 
-    videoModel = new VideoModel();
-    videoModel->create(data,0);
+    videoModel = new JsonHandlerVideo();
+    videoModel->create(data);
     videoModel->process();
     videoModel->print();
 
-    updateVideoModel(videoModel->getTitles());
+    updateJsonHandlerVideo(videoModel->getTitles());
 
     videosChanged(videoListModel, slugsModel->getTitleAt(selectedSlugIndex));
 }
 
 
-void MainController::updateVideoModel(QList<QString>& list)
+void MainUiController::updateJsonHandlerVideo(QList<QString>& list)
 {
     if(!list.empty()) {
         if(!videoListModel) {
@@ -115,8 +115,8 @@ void MainController::updateVideoModel(QList<QString>& list)
 // TODO this method should return bitrates for the different downloads
 //      and this needs to be presented in a dialog to the user to be chosen from
 //      on bitrate selected and click on "download" the file will begin downloading
-void MainController::getResourceUriBitrates(int index) {
-    DRSession* session = new DRSession();
+void MainUiController::getResourceUriBitrates(int index) {
+    DRHttpSession* session = new DRHttpSession();
     const QString videoUrl = videoModel->getVideoResourceUrlAt(index);
 
     selectedVideoIndex = index;
@@ -132,17 +132,17 @@ void MainController::getResourceUriBitrates(int index) {
     startDownload(session);
 }
 
-void MainController::resourceUriDownloadDone(QByteArray *data) {
-    resourceModel = new ResourceModel();
-    resourceModel->create(data,0);
+void MainUiController::resourceUriDownloadDone(QByteArray *data) {
+    resourceModel = new JsonHandlerResource();
+    resourceModel->create(data);
     resourceModel->process();
     resourceModel->print();
 
     getResource((int)2);
 }
 
-void MainController::getResource(int index) {
-    DRSession* session = new DRSession();
+void MainUiController::getResource(int index) {
+    DRHttpSession* session = new DRHttpSession();
     const QString downloadUri = resourceModel->getDownloadUri(index);
     QString preparedUri = QString("http://vodfiles.dr.dk/");
     int delimPos = downloadUri.indexOf("CMS/Resources/");
@@ -163,16 +163,16 @@ void MainController::getResource(int index) {
     startDownload(session);
 }
 
-void MainController::resourceDownloadDone() {
+void MainUiController::resourceDownloadDone() {
     qDebug("DEBUG: resourceDownloadDone() >>\n");
     downloaded();
 }
 
-void MainController::dataReadProgress(qint64 bytesRead, qint64 totalKb) {
+void MainUiController::dataReadProgress(qint64 bytesRead, qint64 totalKb) {
     actionProgress(bytesRead,totalKb);
 }
 
-void MainController::startDownload(DRSession *session) {
+void MainUiController::startDownload(DRHttpSession *session) {
     QThread* thread = new QThread;
     session->moveToThread(thread);
 

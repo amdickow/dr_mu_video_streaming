@@ -8,18 +8,18 @@
 #include <QStringListModel>
 #include <QProgressDialog>
 #include <QThread>
-#include "SlugModel.h"
-#include "VideoModel.h"
-#include "ResourceModel.h"
-#include "DRSession.h"
+#include "JsonHandlerSlug.h"
+#include "JsonHandlerVideo.h"
+#include "JsonHandlerResource.h"
+#include "DRHttpSession.h"
 
-class MainController : public QObject
+class MainUiController : public QObject
 {
     Q_OBJECT
 
 public:
-    MainController();
-    ~MainController();
+    MainUiController();
+    ~MainUiController();
 
     enum ControllerState {
         kIdle,
@@ -46,20 +46,20 @@ public slots:
 
 private:
     void updateSlugsModel(QList<QString>& list);
-    void updateVideoModel(QList<QString>& list);
-    void startDownload(DRSession *session);
+    void updateJsonHandlerVideo(QList<QString>& list);
+    void startDownload(DRHttpSession *session);
 
     ControllerState state;
     int selectedSlugIndex;
     int selectedVideoIndex;
     int selectedBitrateIndex;
-    QList<DRSession*> sessionList;
+    QList<DRHttpSession*> sessionList;
     QList<QThread*> threadList;
     QStringListModel* slugsListModel;
     QStringListModel* videoListModel;
-    SlugModel *slugsModel;
-    VideoModel * videoModel;
-    ResourceModel *resourceModel;
+    JsonHandlerSlug *slugsModel;
+    JsonHandlerVideo * videoModel;
+    JsonHandlerResource *resourceModel;
 };
 
 #endif // MAINCONTROLLER_H

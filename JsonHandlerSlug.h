@@ -9,10 +9,10 @@
 
 #include "JsonHandlerBase.h"
 
-class SlugModel : public JsonHandlerBase
+class JsonHandlerSlug : public JsonHandlerBase
 {
 public:
-    SlugModel();
+    JsonHandlerSlug();
 
     const QString &getSlugAt(int index);
     const QString &getTitleAt(int index);

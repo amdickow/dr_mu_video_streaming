@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <QStringListModel>
-#include "MainController.h"
+#include "MainUiController.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,7 +40,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    MainController *controller;
+    MainUiController *controller;
     QProgressDialog *progressDialog;
     int currentSlugSelection;
     int currentVideoSelection;

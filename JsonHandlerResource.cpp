@@ -1,4 +1,4 @@
-#include "ResourceModel.h"
+#include "JsonHandlerResource.h"
 
 #include <QString>
 #include <QJsonArray>
@@ -43,9 +43,9 @@ void ResourceEntries::print() {
     }
 }
 
-ResourceModel::ResourceModel() : JsonHandlerBase(), resId(0) { }
+JsonHandlerResource::JsonHandlerResource() : JsonHandlerBase(), resId(0) { }
 
-void ResourceModel::processJsonArray(const QJsonArray &node) {
+void JsonHandlerResource::processJsonArray(const QJsonArray &node) {
 
     qDebug("DEBUG: processJsonArray() >>\n");
 
@@ -65,7 +65,7 @@ void ResourceModel::processJsonArray(const QJsonArray &node) {
     }
 }
 
-void ResourceModel::processLinks(const QJsonArray &node) {
+void JsonHandlerResource::processLinks(const QJsonArray &node) {
     qDebug("DEBUG: processLinks() >>\n");
 
     foreach (QVariant item, node.toVariantList()) {
@@ -86,20 +86,20 @@ void ResourceModel::processLinks(const QJsonArray &node) {
 }
 
 
-unsigned int ResourceModel::getResourceId() {
+unsigned int JsonHandlerResource::getResourceId() {
     return resId;
 }
 
-const QString &ResourceModel::getName() {
+const QString &JsonHandlerResource::getName() {
     return name;
 }
 
-const QString &ResourceModel::getDownloadUri(int index) {
+const QString &JsonHandlerResource::getDownloadUri(int index) {
     return entries.getUriAt(index);
 }
 
 
-void ResourceModel::print() {
+void JsonHandlerResource::print() {
     qDebug("DEBUG: print() >>\n");
 
     if (!name.isEmpty()) {

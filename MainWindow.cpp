@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    controller = new MainController();
+    controller = new MainUiController();
     connect(controller, SIGNAL(slugsChanged(QStringListModel*)),
             this, SLOT(slugsChanged(QStringListModel*)));
     connect(controller, SIGNAL(videosChanged(QStringListModel*,QString)),
@@ -32,7 +32,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::progress(qint64 value, qint64 total)
 {
-    qDebug("DEBUG: progress() value: %d total: %d", value, total);
+    qDebug("DEBUG: progress() value: %d total: %d", (int)value, (int)total);
     if (this->progressDialog) {
         if (this->progressDialog->isVisible()) {
             this->progressDialog->setMaximum(total);

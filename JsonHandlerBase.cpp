@@ -5,7 +5,13 @@
 
 JsonHandlerBase::JsonHandlerBase() {}
 
-bool JsonHandlerBase::create(QByteArray *data, int size) {
+JsonHandlerBase::~JsonHandlerBase() {}
+
+void JsonHandlerBase::kill() {
+    delete this;
+}
+
+bool JsonHandlerBase::create(QByteArray *data) {
     doc = QJsonDocument::fromJson(*data);
     return !doc.isNull();
 }

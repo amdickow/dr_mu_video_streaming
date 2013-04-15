@@ -1,4 +1,4 @@
-#include "VideoModel.h"
+#include "JsonHandlerVideo.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -45,9 +45,9 @@ void VideoEntries::print() {
     }
 }
 
-VideoModel::VideoModel() : JsonHandlerBase(), id(0) { }
+JsonHandlerVideo::JsonHandlerVideo() : JsonHandlerBase(), id(0) { }
 
-void VideoModel::processJsonArray(const QJsonArray &node) {
+void JsonHandlerVideo::processJsonArray(const QJsonArray &node) {
 
     qDebug("DEBUG: processJsonArray() >>\n");
 
@@ -69,24 +69,24 @@ void VideoModel::processJsonArray(const QJsonArray &node) {
     }
 }
 
-unsigned int VideoModel::getId() {
+unsigned int JsonHandlerVideo::getId() {
     return id;
 }
 
-QString *VideoModel::getDescription() {
+QString *JsonHandlerVideo::getDescription() {
     return 0; //&description;
 }
 
-QList<QString> &VideoModel::getTitles() {
+QList<QString> &JsonHandlerVideo::getTitles() {
     return videoEntries.getTitles();
 }
 
 
-const QString &VideoModel::getVideoResourceUrlAt(int index) {
+const QString &JsonHandlerVideo::getVideoResourceUrlAt(int index) {
     return videoEntries.getVideoResUrlAt(index);
 }
 
-void VideoModel::print() {
+void JsonHandlerVideo::print() {
     qDebug("DEBUG print() >>\n");
     videoEntries.print();
 }

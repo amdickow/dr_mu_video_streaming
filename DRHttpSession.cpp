@@ -8,27 +8,27 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QUrl>
 
-#include "DRSession.h"
+#include "DRHttpSession.h"
 
 using namespace std;
 
 
-DRSession::DRSession(bool saveToFile) :
+DRHttpSession::DRHttpSession(bool saveToFile) :
     toFile(saveToFile),
     reply(0),
     url(0) {
 }
 
-DRSession::~DRSession() {
+DRHttpSession::~DRHttpSession() {
     //do cleanup - not the same as clear()
     clear();
 }
 
-bool DRSession::clear() {
+bool DRHttpSession::clear() {
     return true;
 }
 
-bool DRSession::setup(QString userUrl) {
+bool DRHttpSession::setup(QString userUrl) {
     if (!userUrl.isEmpty()) {
         url = QUrl::fromUserInput(userUrl);
         return true;
@@ -36,7 +36,7 @@ bool DRSession::setup(QString userUrl) {
     return false;
 }
 
-void DRSession::execute() {
+void DRHttpSession::execute() {
 #ifdef DEBUG_READ_DATA_FROM_FILE
     size_t size;
     done(new QByteArray(readFromFile(&size)));
@@ -54,7 +54,7 @@ void DRSession::execute() {
 }
 
 #ifndef DEBUG_READ_DATA_FROM_FILE
-void DRSession::httpFinished()
+void DRHttpSession::httpFinished()
 {
     // TODO: Implement and handle aborted
 
@@ -90,7 +90,7 @@ void DRSession::httpFinished()
 #endif
 
 #ifndef DEBUG_READ_DATA_FROM_FILE
-void DRSession::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
+void DRHttpSession::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
 {
     //if (httpRequestAborted)
     //    return;
@@ -106,7 +106,7 @@ void DRSession::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
 
 
 #ifdef DEBUG_WRITE_DATA_TO_FILE
-void DRSession::dumpToFile() {
+void DRHttpSession::dumpToFile() {
     FILE* file = 0;
 
     string fileStr = string("curlDump");
@@ -126,7 +126,7 @@ void DRSession::dumpToFile() {
 #endif
 
 #ifdef DEBUG_READ_DATA_FROM_FILE
-char * DRSession::readFromFile(size_t *size) {
+char * DRHttpSession::readFromFile(size_t *size) {
     char * buffer = 0;
     FILE * file = 0;
     string fileStr = string("/Users/dickow/git_wa/github/qt_json_parser/test/curlDump");

@@ -30,10 +30,10 @@ private:
     QList<int> bitRates;
 };
 
-class ResourceModel : public JsonHandlerBase
+class JsonHandlerResource : public JsonHandlerBase
 {
 public:
-    ResourceModel();
+    JsonHandlerResource();
 
     unsigned int getResourceId();
     const QString &getName();

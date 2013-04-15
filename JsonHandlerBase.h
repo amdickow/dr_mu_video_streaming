@@ -8,8 +8,11 @@ class JsonHandlerBase
 {
 public:
     JsonHandlerBase();
+    virtual ~JsonHandlerBase();
 
-    bool create(QByteArray *data, int size);
+    virtual void kill();
+
+    bool create(QByteArray *data);
 
     void process();
 

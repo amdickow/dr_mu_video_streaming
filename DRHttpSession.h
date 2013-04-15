@@ -15,12 +15,12 @@
 
 class QNetworkReply;
 
-class DRSession : public QObject
+class DRHttpSession : public QObject
 {
     Q_OBJECT
 public:
-    DRSession(bool saveToFile = false);
-    ~DRSession();
+    DRHttpSession(bool saveToFile = false);
+    ~DRHttpSession();
 
     /**
      * Clear the session

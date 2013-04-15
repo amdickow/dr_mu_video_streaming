@@ -1,4 +1,4 @@
-#include "SlugModel.h"
+#include "JsonHandlerSlug.h"
 
 #include <stdio.h>
 #include <QString>
@@ -9,9 +9,9 @@
 #include <QList>
 
 
-SlugModel::SlugModel() : JsonHandlerBase() { }
+JsonHandlerSlug::JsonHandlerSlug() : JsonHandlerBase() { }
 
-void SlugModel::processJsonArray(const QJsonArray &node) {
+void JsonHandlerSlug::processJsonArray(const QJsonArray &node) {
 
     qDebug("DEBUG: processJsonArray() >>\n");
 
@@ -29,22 +29,22 @@ void SlugModel::processJsonArray(const QJsonArray &node) {
     }
 }
 
-void SlugModel::print() {
+void JsonHandlerSlug::print() {
     qDebug("DEBUG:      slug count: %d\n", titles.size());
     foreach (QString title, titles) {
         qDebug("DEBUG:      slug: %s\n",qPrintable(title));
     }
 }
 
-QList<QString> &SlugModel::getSlugs() {
+QList<QString> &JsonHandlerSlug::getSlugs() {
     return slugs;
 }
 
-QList<QString> &SlugModel::getTitles() {
+QList<QString> &JsonHandlerSlug::getTitles() {
     return titles;
 }
 
-const QString &SlugModel::getSlugAt(int index) {
+const QString &JsonHandlerSlug::getSlugAt(int index) {
     if (index < (int)slugs.size()) {
         return (slugs.at(index));
     } else {
@@ -52,7 +52,7 @@ const QString &SlugModel::getSlugAt(int index) {
     }
 }
 
-const QString &SlugModel::getTitleAt(int index) {
+const QString &JsonHandlerSlug::getTitleAt(int index) {
     if (index < (int)titles.size()) {
         return (titles.at(index));
     } else {

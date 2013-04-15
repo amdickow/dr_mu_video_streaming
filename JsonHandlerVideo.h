@@ -30,10 +30,10 @@ private:
     QList<QString> videoResourceUrls;
 };
 
-class VideoModel : public JsonHandlerBase
+class JsonHandlerVideo : public JsonHandlerBase
 {
 public:
-    VideoModel();
+    JsonHandlerVideo();
 
     unsigned int getId();
     QString *getDescription();
