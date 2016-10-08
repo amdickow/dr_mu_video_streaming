@@ -1,7 +1,8 @@
 qt_json_parser
 ==============
 
-A modest attempt to play around with JSON (libjson) 
+A simple project (with a horrible name) that puts the JSON library, libjson to use.
+The specific use is for parsing the output from queries to the MU (Medieuniversets) REST API. The interface to DR (Denmarks Radio) online streaming content.
 
 
 Project setup
